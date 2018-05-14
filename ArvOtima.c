@@ -4,8 +4,6 @@
 typedef struct{
     int chave;
     int k;
-    int frequencia;
-    int custo;
     struct ARVORE *esq;
     struct ARVORE *dir;
 }ARVORE;
@@ -22,6 +20,7 @@ void declaraDiagPrin(TABELA ***tabela, const int *fl, int n);
 void criaArvore(ARVORE **arvOtima, TABELA **tabela, int *chaves, int i, int j);
 void libera(int **chaves, int **f, int **fl, TABELA ***tabela, int n);
 void printaTabela(TABELA **tabela, int n);
+void printaArvore(ARVORE *arvOtima);
 
 int main() {
 
@@ -42,14 +41,16 @@ int main() {
 
     declaraTabela(&tabela, f, fl, n);
 
-    arvOtima->frequencia = tabela[0][n].frequencia;
+    /*arvOtima->frequencia = tabela[0][n].frequencia;
     arvOtima->custo = tabela[0][n].custo;
     arvOtima->k = tabela[0][n].k;
-    arvOtima->chave = chaves[arvOtima->k];
+    arvOtima->chave = chaves[arvOtima->k];*/
 
     criaArvore(&arvOtima, tabela, chaves, 0, n);
 
     printaTabela(tabela, n);
+
+	printaArvore(arvOtima);
 
     libera(&chaves, &f, &fl, &tabela, n);
 
@@ -109,7 +110,7 @@ void declaraTabela(TABELA ***tabela, const int *f, const int *fl, int n){
             menorCusto = tabelaAux[i][melhorK-1].custo + tabelaAux[melhorK][j].custo + tabelaAux[i][j].frequencia;
             for(k = melhorK + 1; k <= tabelaAux[i+1][j].k; k++) {
                 custo = tabelaAux[i][k-1].custo + tabelaAux[k][j].custo + tabelaAux[i][j].frequencia;
-                if(menorCusto > custo){
+                if(menorCusto >= custo){
                     menorCusto = custo;
                     melhorK = k;
                 }
@@ -132,8 +133,23 @@ void declaraDiagPrin(TABELA ***tabela, const int *fl, int n){
 
 void criaArvore(ARVORE **arvOtima, TABELA **tabela, int *chaves, int i, int j){
     ARVORE *auxArv = *arvOtima;
+    ARVORE *novo;
 
-
+	auxArv->k = tabela[i][j].k;
+	auxArv->chave = chaves[auxArv->k-1];
+	auxArv->esq = NULL;
+	auxArv->dir= NULL;
+	
+	if(tabela[i][auxArv->k-1].k < auxArv->k){
+		novo = (ARVORE *) malloc(sizeof(ARVORE));
+		auxArv->esq = novo;
+		criaArvore(&novo, tabela, chaves, i, (auxArv->k-1));
+	}
+	if(tabela[auxArv->k][j].k > auxArv->k){
+		novo = (ARVORE *) malloc(sizeof(ARVORE));
+		auxArv->dir = novo;
+		criaArvore(&novo, tabela, chaves, auxArv->k, j);
+	}
 }
 
 void printaTabela(TABELA **tabela, int n){
@@ -142,10 +158,21 @@ void printaTabela(TABELA **tabela, int n){
 
     for(i = 0; i < (n+1); i++){
         for(j = i; j < (n+1); j++){
-            printf("%d  --  ", tabela[i][j].custo);
+            printf("%d  --  ", tabela[i][j].k);
         }
         printf("\n");
     }
+}
+
+void printaArvore(ARVORE *arvOtima){
+	printf("%d  ", arvOtima->chave);
+	
+	if(arvOtima->esq != NULL){
+		printaArvore(arvOtima->esq);
+	}
+	if(arvOtima->dir != NULL){
+		printaArvore(arvOtima->dir);
+	}
 }
 
 void libera(int **chaves, int **f, int **fl, TABELA ***tabela, int n){
