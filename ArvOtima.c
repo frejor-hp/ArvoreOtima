@@ -52,10 +52,10 @@ int main() {
 
     //printaTabela(tabela, n);
 
-    printf("Custo: %d\n", arvOtima->custo);
-    printf("Pre-ordem: ");
+	printf("Custo: %d\n", arvOtima->custo);
+	printf("Pre-Ordem:");
 
-    printaArvore(arvOtima);
+	printaArvore(arvOtima);
 
     printf("\n");
 
@@ -117,7 +117,7 @@ void declaraTabela(TABELA ***tabela, const int *f, const int *fl, int n){
             menorCusto = tabelaAux[i][melhorK-1].custo + tabelaAux[melhorK][j].custo + tabelaAux[i][j].frequencia;
             for(k = melhorK + 1; k <= tabelaAux[i+1][j].k; k++) {
                 custo = tabelaAux[i][k-1].custo + tabelaAux[k][j].custo + tabelaAux[i][j].frequencia;
-                if(menorCusto >= custo){
+                if(menorCusto > custo){
                     menorCusto = custo;
                     melhorK = k;
                 }
@@ -173,7 +173,7 @@ void printaTabela(TABELA **tabela, int n){
 }
 
 void printaArvore(ARVORE *arvOtima){
-	printf("%d  ", arvOtima->chave);
+	printf(" %d", arvOtima->k);
 
 	if(arvOtima->esq != NULL){
 		printaArvore(arvOtima->esq);
