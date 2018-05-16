@@ -4,6 +4,7 @@
 typedef struct _ARVORE{
     int chave;
     int k;
+    int custo;
     struct _ARVORE *esq;
     struct _ARVORE *dir;
 }ARVORE;
@@ -51,7 +52,10 @@ int main() {
 
     //printaTabela(tabela, n);
 
-	printaArvore(arvOtima);
+    printf("Custo: %d\n", arvOtima->custo);
+    printf("Pre-ordem: ");
+
+    printaArvore(arvOtima);
 
     printf("\n");
 
@@ -140,6 +144,7 @@ void criaArvore(ARVORE **arvOtima, TABELA **tabela, int *chaves, int i, int j){
 
 	auxArv->k = tabela[i][j].k;
 	auxArv->chave = chaves[auxArv->k-1];
+	auxArv->custo = tabela[i][j].custo;
 	auxArv->esq = NULL;
 	auxArv->dir= NULL;
 
