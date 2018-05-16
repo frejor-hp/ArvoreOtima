@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct{
+typedef struct _ARVORE{
     int chave;
     int k;
-    struct ARVORE *esq;
-    struct ARVORE *dir;
+    struct _ARVORE *esq;
+    struct _ARVORE *dir;
 }ARVORE;
 
-typedef struct{
+typedef struct _TABELA{
     int frequencia;
     int custo;
     int k;
@@ -18,9 +18,10 @@ void recebeValores(int **chaves, int **f, int **fl, int n);
 void declaraTabela(TABELA ***tabela, const int *f, const int *fl, int n);
 void declaraDiagPrin(TABELA ***tabela, const int *fl, int n);
 void criaArvore(ARVORE **arvOtima, TABELA **tabela, int *chaves, int i, int j);
-void libera(int **chaves, int **f, int **fl, TABELA ***tabela, int n);
 void printaTabela(TABELA **tabela, int n);
 void printaArvore(ARVORE *arvOtima);
+void libera(int **chaves, int **f, int **fl, TABELA ***tabela, int n);
+void liberaArvore(ARVORE **arvOtima);
 
 int main() {
 
@@ -48,9 +49,11 @@ int main() {
 
     criaArvore(&arvOtima, tabela, chaves, 0, n);
 
-    printaTabela(tabela, n);
+    //printaTabela(tabela, n);
 
 	printaArvore(arvOtima);
+
+    printf("\n");
 
     libera(&chaves, &f, &fl, &tabela, n);
 
@@ -139,13 +142,13 @@ void criaArvore(ARVORE **arvOtima, TABELA **tabela, int *chaves, int i, int j){
 	auxArv->chave = chaves[auxArv->k-1];
 	auxArv->esq = NULL;
 	auxArv->dir= NULL;
-	
-	if(tabela[i][auxArv->k-1].k < auxArv->k){
+
+	if((tabela[i][auxArv->k-1].k < auxArv->k) && (tabela[i][auxArv->k-1].k != 0)){
 		novo = (ARVORE *) malloc(sizeof(ARVORE));
 		auxArv->esq = novo;
 		criaArvore(&novo, tabela, chaves, i, (auxArv->k-1));
 	}
-	if(tabela[auxArv->k][j].k > auxArv->k){
+	if((tabela[auxArv->k][j].k > auxArv->k) && (tabela[auxArv->k][j].k != 0)){
 		novo = (ARVORE *) malloc(sizeof(ARVORE));
 		auxArv->dir = novo;
 		criaArvore(&novo, tabela, chaves, auxArv->k, j);
@@ -166,7 +169,7 @@ void printaTabela(TABELA **tabela, int n){
 
 void printaArvore(ARVORE *arvOtima){
 	printf("%d  ", arvOtima->chave);
-	
+
 	if(arvOtima->esq != NULL){
 		printaArvore(arvOtima->esq);
 	}
@@ -185,4 +188,15 @@ void libera(int **chaves, int **f, int **fl, TABELA ***tabela, int n){
         free((*tabela)[i]);
     }
     free(*tabela);
+}
+
+void liberaArvore(ARVORE **arvOtima){
+    if((*arvOtima)->esq != NULL){
+        liberaArvore(&(*arvOtima)->esq);
+    }
+    if((*arvOtima)->dir != NULL){
+        liberaArvore(&(*arvOtima)->dir);
+    }
+
+    free(*arvOtima);
 }
